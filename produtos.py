@@ -68,7 +68,7 @@ def cadastrar():
             print(titulo('CADASTRO'))
             produto = (input('Produto: ')).strip().upper()
 
-            if len(produto) == 0 or not produto.isalpha():
+            if len(produto) == 0 or not produto.isalnum():
                 print("Informe Qual produto para Cadrastar!\n")
                 parar()
                 limpar_terminal()
@@ -79,7 +79,7 @@ def cadastrar():
                 
                 while True:
                     escolha = str(input('Quer adicionar a quantidade?\n[S] Sim | [N] Nao: ')).strip().upper()
-                    
+                    print()
                     if escolha not in ('N', 'S'):
                         print('Opcao Invalida!')
                         continue
@@ -87,8 +87,6 @@ def cadastrar():
                 
                 if escolha != "S":
                     continue
-                
-                limpar_terminal()
            
             break
         
@@ -106,29 +104,96 @@ def cadastrar():
                 continue
 
         if produto in produtos:
+            limpar_terminal()
+            print(f'\nQuantidade Atualizada!\nProduto: {produto}\nQuantidade: {produtos[produto]} → {produtos[produto] + quantidade}')
+            
             produtos[produto] += quantidade
 
         else:
-            produtos[produto] = quantidade
+            produtos[produto] = quantidade       
+            
+            limpar_terminal()
+            print(f'\nCadastro Realizado!\nProduto: {produto}\nQuantidade: {quantidade}')    
         
-        print(f'Cadastro Realizado! {produtos}')    
-        
-        #escrever_json()
+        escrever_json()
+        parar()
 
     except Exception as erro:
         print(f'Erro Inesperado!\n{erro}')
+
+def remover():
+    if len(produtos) == 0:
+        limpar_terminal()
+        print('\nNenhum Produto Adicionado!\n')
+        parar()
+    
+    else:
+        list_produtos = list(produtos.keys())
+
+        print(titulo('PRODUTOS'))
+        
+        for i, (p, q) in enumerate(produtos.items(), start=1):
+            print(f'[{i}] - {p} = {q} und')
+    
+    while True:
+        try:
+            rmv = int(input("Qual Produto quer Remover? ([0] Para Cancelar): "))
+
+            if rmv == 0:
+                return
+            
+            if rmv < 1 or rmv > len(list_produtos):
+                print('Indice Invalido!')
+                continue
+
+            produto_escolhido = list_produtos[rmv - 1]
+            quantidade_atual = produtos[produto_escolhido]
+
+            qtd = int(input(f'Quantidade a remover (máximo {quantidade_atual}): '))
+
+            if qtd <= 0:
+                print('Quantidade Invalida!')
+                continue
+            
+            if qtd > quantidade_atual:
+                print('Quantidade Maior que o Estoque!')
+                continue
+
+            nova_quantidade = quantidade_atual - qtd
+
+            print(f'\nQuantidade Removida!\nProduto: {produto_escolhido}\nQuantidade: {quantidade_atual} → {nova_quantidade}')
+
+            if nova_quantidade == 0:
+                del produtos[produto_escolhido]
+                print('Produto Removido!')
+            
+            else:
+                produtos[produto_escolhido] = nova_quantidade
+
+            escrever_json()
+            parar()
+
+        except Exception as erro:
+            print(f"Digite apenas numeros!\n{erro}")
+            continue
 
 # Main
 
 print('Iniciando...')
 barra()
+carregar_json()
 parar()
 limpar_terminal()
 
 while True:
     opc = menu()
     
-    if opc == 1:
-        cadastrar()
-        parar()
-        limpar_terminal()
+    match opc:
+    
+        case 1:
+            cadastrar()
+            limpar_terminal()
+        
+        case 2:
+            remover()
+            limpar_terminal()

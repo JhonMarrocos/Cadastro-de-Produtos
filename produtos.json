@@ -1,1 +1,12 @@
-{}
+[
+    {
+        "Produto": "ARROZ",
+        "Quantidade": 17,
+        "Preço": 0.0
+    },
+    {
+        "Produto": "FEIJÃO",
+        "Quantidade": 21,
+        "Preço": 0.0
+    }
+]
